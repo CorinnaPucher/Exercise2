@@ -1,18 +1,35 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
 import at.ac.fhcampuswien.fhmdb.JSONAction;
+import at.ac.fhcampuswien.fhmdb.JsonMovie;
 
 import java.util.*;
 
 public class Movie implements Comparable<Movie> {
-    private String title;
-    private String description;
-    private List<Genre> genres;
+    public String id;
+    public String title;
+    public String[] genres;
+    public int releaseYear;
+    public String description;
+    public String imgUrl;
+    public int lengthInMinutes;
+    public String[] directors;
+    public String[] writers;
+    public String[] mainCast;
+    public double rating;
 
-    public Movie(String title, String description, List<Genre> genres) {
-        this.title = title;
-        this.description = description;
-        this.genres = genres;
+    public Movie(JsonMovie jsonMovie) {
+        this.id = jsonMovie.id;
+        this.title = jsonMovie.title;
+        this.genres = jsonMovie.genres;
+        this.releaseYear = jsonMovie.releaseYear;
+        this.description = jsonMovie.description;
+        this.imgUrl = jsonMovie.imgUrl;
+        this.lengthInMinutes = jsonMovie.lengthInMinutes;
+        this.directors = jsonMovie.directors;
+        this.writers = jsonMovie.writers;
+        this.mainCast = jsonMovie.mainCast;
+        this.rating = jsonMovie.rating;
     }
 
     public String getTitle() {
@@ -25,39 +42,15 @@ public class Movie implements Comparable<Movie> {
 
     public String getGenres() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Genre genres : genres) {
-            stringBuilder.append(genres + ", ");
+        for (String genre : genres) {
+            stringBuilder.append(genre + ", ");
         }
-        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length() - 1);
+        stringBuilder.delete(stringBuilder.length()-2,stringBuilder.length()-1);
         return stringBuilder.toString();
     }
 
     public static List<Movie> initializeMovies() {
-
-        List<Movie> movies = JSONAction.readJsonFile("./movie.json");
-
-
-        /*List<Genre> genres = new ArrayList<>();
-        Collections.addAll(genres, Genre.ACTION, Genre.ADVENTURE);
-
-        movies.add(new Movie("Mew", "This is a catty movie , mew", genres));
-
-        genres = new ArrayList<>();
-        Collections.addAll(genres, Genre.DOCUMENTARY);
-        movies.add(new Movie("Camonna Tong", "Look at me. You may not like it but this is how a free guy looks like.", genres));
-
-        genres = new ArrayList<>();
-        Collections.addAll(genres, Genre.CRIME, Genre.DRAMA);
-        movies.add(new Movie("Simba und die Blume", "Dangerous cat eating flowers", genres));
-
-        genres = new ArrayList<>();
-        Collections.addAll(genres, Genre.CRIME, Genre.DRAMA);
-        movies.add(new Movie("Ein Esel", "Dangerous cat eating flowers", genres));
-
-        genres = new ArrayList<>();
-        Collections.addAll(genres, Genre.CRIME, Genre.DRAMA);
-        movies.add(new Movie("Eine Irgendwas", "Dangerous cat eating flowers", genres));*/
-
+        List<Movie> movies = JSONAction.readJsonFile();
         return movies;
     }
 

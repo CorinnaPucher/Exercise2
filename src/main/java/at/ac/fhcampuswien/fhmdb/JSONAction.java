@@ -18,32 +18,18 @@ import com.google.gson.reflect.TypeToken;
  */
 public class JSONAction {
     // Method which returneth a JSON List if you provideth a path
-    public static List<Movie> readJsonFile(String path){
+    public static List<Movie> readJsonFile(){
         // Initialize GSon Object to Convert Json to JsonMovie object
         Gson gson = new Gson();
         List<Movie> movies = new ArrayList<>();
 
-        try (FileReader reader = new FileReader(path)) {
-            // Provideth the Type of Object which it should return for us to parse (JsonMovie)
-            Type movieListType = new TypeToken<List<JsonMovie>>(){}.getType();
+        // Provideth the Type of Object which it should return for us to parse (JsonMovie)
+        Type movieListType = new TypeToken<List<JsonMovie>>(){}.getType();
 
-            // Parse JSON file and deserialize it into a list of Movie objects
-            List<JsonMovie> jMovies = gson.fromJson(reader, movieListType);
-
-            // Converteth all jMovies into normal Movies which we can use for our UI
-            for (JsonMovie jMovie: jMovies) {
-                String genreInputJSON = jMovie.genres.toUpperCase();
-
-                String[] genresList = genreInputJSON.split(",");
-                List<Genre> genres = new ArrayList<>();
-                for (String genre : genresList) {
-                    genres.add(Genre.valueOf(genre));
-                }
-
-                movies.add(new Movie(jMovie.title, jMovie.description, genres));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        // Parse JSON file and deserialize it into a list of Movie objects
+        List<JsonMovie> jMovies = gson.fromJson(MovieAPI.sendRequest(), movieListType);
+        for (JsonMovie jMovie : jMovies) {
+            movies.add(new Movie(jMovie));
         }
 
         return movies;

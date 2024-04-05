@@ -31,7 +31,10 @@ public class HomeController implements Initializable {
 
     @FXML
     public JFXComboBox genreComboBox;
-
+    @FXML
+    public TextField yearSearchField;
+    @FXML
+    public TextField ratingSearchField;
     @FXML
     public JFXButton sortBtn;
 
@@ -72,6 +75,7 @@ public class HomeController implements Initializable {
             filter(searchField.getText().toLowerCase(), (Genre) genreComboBox.getValue(), observableMovies, allMovies);
         });
     }
+    // TODO neues request senden mit query
     public static void filter (String searchValue, Genre genre, List<Movie> observableMovies, List<Movie> allMovies) {
         observableMovies.clear();
         // for(Movie m: all Movies)
