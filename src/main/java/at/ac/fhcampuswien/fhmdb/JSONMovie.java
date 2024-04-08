@@ -1,7 +1,7 @@
 package at.ac.fhcampuswien.fhmdb;
 
 
-public class JsonMovie {
+public class JSONMovie {
     public String id;
     public String title;
     public String[] genres;

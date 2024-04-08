@@ -72,25 +72,26 @@ public class HomeController implements Initializable {
 
         // Filter button:
         searchBtn.setOnAction(actionEvent -> {
-            filter(searchField.getText().toLowerCase(), (Genre) genreComboBox.getValue(), observableMovies, allMovies);
+            filter();
         });
     }
-    // TODO neues request senden mit query
-    public static void filter (String searchValue, Genre genre, List<Movie> observableMovies, List<Movie> allMovies) {
+    
+    public void filter () {
         observableMovies.clear();
-        // for(Movie m: all Movies)
-        for (int i = 0; i < allMovies.size(); i++) {
-            Movie m = allMovies.get(i);
-            boolean genreEqual;
-            boolean titleEqual = m.getTitle().toLowerCase().contains(searchValue);
-            boolean descriptionEqual = m.getDescription().toLowerCase().contains(searchValue);
-            if (genre == null) {
-                genreEqual = true;
-            } else genreEqual = m.getGenres().contains(genre.toString());
-
-            if ((titleEqual || descriptionEqual) && genreEqual) {
-                observableMovies.add(m);
-            }
+        String query = searchField.getText();
+        String genre = "";
+        int releaseYear = -1;
+        int ratingFrom = -1;
+        if (genreComboBox.getValue() != null) {
+            genre = genreComboBox.getValue().toString();
         }
+        if(!yearSearchField.getText().equals("")) {
+            releaseYear = Integer.parseInt(yearSearchField.getText());
+        }
+        if(!ratingSearchField.getText().equals("")) {
+            ratingFrom = Integer.parseInt(ratingSearchField.getText());
+        }
+        List<Movie> filteredMovies = JSONAction.parseJSON(MovieAPI.sendRequest(query,genre,releaseYear,ratingFrom));
+        observableMovies.addAll(filteredMovies);
     }
 }

@@ -1,7 +1,8 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
 import at.ac.fhcampuswien.fhmdb.JSONAction;
-import at.ac.fhcampuswien.fhmdb.JsonMovie;
+import at.ac.fhcampuswien.fhmdb.JSONMovie;
+import at.ac.fhcampuswien.fhmdb.MovieAPI;
 
 import java.util.*;
 
@@ -18,7 +19,7 @@ public class Movie implements Comparable<Movie> {
     public String[] mainCast;
     public double rating;
 
-    public Movie(JsonMovie jsonMovie) {
+    public Movie(JSONMovie jsonMovie) {
         this.id = jsonMovie.id;
         this.title = jsonMovie.title;
         this.genres = jsonMovie.genres;
@@ -50,7 +51,7 @@ public class Movie implements Comparable<Movie> {
     }
 
     public static List<Movie> initializeMovies() {
-        List<Movie> movies = JSONAction.readJsonFile();
+        List<Movie> movies = JSONAction.parseJSON(MovieAPI.sendRequest());
         return movies;
     }
 
