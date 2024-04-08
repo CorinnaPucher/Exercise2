@@ -14,10 +14,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class HomeController implements Initializable {
     @FXML
@@ -59,7 +58,7 @@ public class HomeController implements Initializable {
 
         // Sort button:
         sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
+            if (sortBtn.getText().equals("Sort (asc)")) {
                 // sort observableMovies ascending
                 Collections.sort(observableMovies);
                 sortBtn.setText("Sort (desc)");
@@ -75,8 +74,8 @@ public class HomeController implements Initializable {
             filter();
         });
     }
-    
-    public void filter () {
+
+    public void filter() {
         observableMovies.clear();
         String query = searchField.getText();
         String genre = "";
@@ -85,13 +84,88 @@ public class HomeController implements Initializable {
         if (genreComboBox.getValue() != null) {
             genre = genreComboBox.getValue().toString();
         }
-        if(!yearSearchField.getText().equals("")) {
+        if (!yearSearchField.getText().equals("")) {
             releaseYear = Integer.parseInt(yearSearchField.getText());
         }
-        if(!ratingSearchField.getText().equals("")) {
+        if (!ratingSearchField.getText().equals("")) {
             ratingFrom = Integer.parseInt(ratingSearchField.getText());
         }
-        List<Movie> filteredMovies = JSONAction.parseJSON(MovieAPI.sendRequest(query,genre,releaseYear,ratingFrom));
+        List<Movie> filteredMovies = JSONAction.parseJSON(MovieAPI.sendRequest(query, genre, releaseYear, ratingFrom));
         observableMovies.addAll(filteredMovies);
+    }
+
+    /**
+     * Return actor who most often was in the main cast
+     * @param movies all movies
+     * @return actor with highest count
+     */
+    public String getMostPopularActor(List<Movie> movies) {
+        Stream<Movie> streamFromList = movies.stream();
+        Map<String, Integer> countMap = new HashMap<>();
+        streamFromList.forEach(movie -> {
+            Stream<String> actorArray = Stream.of(movie.mainCast);
+            actorArray.forEach(actor -> {
+                int numberMovies = 0;
+                if (countMap.get(actor) != null) {
+                    numberMovies = countMap.get(actor);
+                }
+                countMap.put(actor, numberMovies + 1);
+            });
+        });
+        final int[] maxCount = {0};
+        final String[] maxActor = {""};
+        countMap.forEach((actorName, actorCount) -> {
+            if(actorCount > maxCount[0]) {
+                maxCount[0] = actorCount;
+                maxActor[0] = actorName;
+            }
+        });
+        return maxActor[0];
+    }
+
+    /**
+     * Return title length of the movie with the longest title
+     * @param movies all movies
+     * @return title length
+     */
+    public int getLongestMovieTitle(List<Movie> movies) {
+        Stream<Movie> streamFromList = movies.stream();
+        Integer longestTitle = streamFromList
+                .mapToInt(Movie::getTitleLength)
+                .max()
+                .orElseThrow(NoSuchElementException::new);
+        System.out.println(longestTitle);
+        //Stream<Movie> newStream = movies.stream();
+        //newStream.forEach(movie -> System.out.println(movie.title + " " + movie.getTitleLength()));
+        return longestTitle;
+    }
+
+    /**
+     * Return count of movies for specified director
+     * @param movies all movies
+     * @param director specific director
+     * @return count of movies
+     */
+    public long countMoviesFrom(List<Movie> movies, String director) {
+        Stream<Movie> streamFromList = movies.stream();
+        Long movieCount = streamFromList
+                .filter(movie -> movie.directorIsInsideArray(director))
+                .count();
+        return movieCount;
+    }
+
+    /**
+     * Return movie list with release year between two given years
+     * @param movies all movies
+     * @param startYear search value greater or equal
+     * @param endYear search value less or equal
+     * @return filtered movie list
+     */
+    public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+        Stream<Movie> streamFromList = movies.stream();
+        List<Movie> filteredList = streamFromList
+                .filter(movie -> movie.releaseYear >= startYear && movie.releaseYear <= endYear)
+                .toList();
+        return filteredList;
     }
 }

@@ -5,6 +5,7 @@ import at.ac.fhcampuswien.fhmdb.JSONMovie;
 import at.ac.fhcampuswien.fhmdb.MovieAPI;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Movie implements Comparable<Movie> {
     public String id;
@@ -48,6 +49,15 @@ public class Movie implements Comparable<Movie> {
         }
         stringBuilder.delete(stringBuilder.length()-2,stringBuilder.length()-1);
         return stringBuilder.toString();
+    }
+    public int getTitleLength() {
+        return title.length();
+    }
+
+    public boolean directorIsInsideArray(String director) {
+        Stream<String> streamDirectors = Stream.of(directors);
+        boolean bool = streamDirectors.anyMatch(dir -> dir.equals(director));
+        return bool;
     }
 
     public static List<Movie> initializeMovies() {
