@@ -20,7 +20,6 @@ public class FhmdbApplication extends Application {
     }
 
     public static void main(String[] args) throws IOException {
-        MovieAPI.sendRequest();
         launch();
     }
 }

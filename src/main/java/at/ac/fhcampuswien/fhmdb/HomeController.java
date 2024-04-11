@@ -80,7 +80,7 @@ public class HomeController implements Initializable {
         String query = searchField.getText();
         String genre = "";
         int releaseYear = -1;
-        int ratingFrom = -1;
+        double ratingFrom = -1;
         if (genreComboBox.getValue() != null) {
             genre = genreComboBox.getValue().toString();
         }
@@ -92,6 +92,17 @@ public class HomeController implements Initializable {
         }
         List<Movie> filteredMovies = JSONAction.parseJSON(MovieAPI.sendRequest(query, genre, releaseYear, ratingFrom));
         observableMovies.addAll(filteredMovies);
+    }
+
+    public void filter(String query, String genre, int releaseYear, double ratingFrom) {
+        observableMovies.clear();
+
+        List<Movie> filteredMovies = JSONAction.parseJSON(MovieAPI.sendRequest(query, genre, releaseYear, ratingFrom));
+        observableMovies.addAll(filteredMovies);
+    }
+
+    public ObservableList<Movie> getObservableMovies() {
+        return observableMovies;
     }
 
     /**
@@ -134,7 +145,6 @@ public class HomeController implements Initializable {
                 .mapToInt(Movie::getTitleLength)
                 .max()
                 .orElseThrow(NoSuchElementException::new);
-        System.out.println(longestTitle);
         //Stream<Movie> newStream = movies.stream();
         //newStream.forEach(movie -> System.out.println(movie.title + " " + movie.getTitleLength()));
         return longestTitle;
