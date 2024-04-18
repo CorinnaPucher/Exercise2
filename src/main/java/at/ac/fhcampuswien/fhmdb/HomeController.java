@@ -76,6 +76,9 @@ public class HomeController implements Initializable {
         });
     }
 
+    /**
+     * Parses all Fields and filters the Movielist accordingly
+     */
     public void filter() {
         observableMovies.clear();
         String query = searchField.getText();
@@ -102,26 +105,21 @@ public class HomeController implements Initializable {
         observableMovies.addAll(filteredMovies);
     }
 
-    public ObservableList<Movie> getObservableMovies() {
-        return observableMovies;
-    }
-
     /**
      * Return actor who most often was in the main cast
      * @param movies all movies
      * @return actor with highest count
      */
     public String getMostPopularActor(List<Movie> movies) {
-        Stream<Map.Entry<String, Long>> actorStream = movies.stream()
-                .flatMap(movie -> Arrays.stream(movie.mainCast))
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-                .entrySet()
-                .stream();
+        Optional<Map.Entry<String, Long>> highestEntry = movies.stream()
+                .flatMap(movie -> Arrays.stream(movie.mainCast)) // All mainCastArrays merge into one stream
+                .collect(Collectors.groupingBy(e -> e, Collectors.counting())) // Group by Occurences
+                .entrySet()  // Maps have to be converted to a Set to convert to Stream
+                .stream()
+                .max(Map.Entry.comparingByValue());
 
-        return actorStream
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse("");
+        if(highestEntry.isPresent()) return highestEntry.get().getKey();
+        else return "";
     }
 
     /**
@@ -133,7 +131,7 @@ public class HomeController implements Initializable {
         Stream<Movie> streamFromList = movies.stream();
 
         return streamFromList
-                .mapToInt(Movie::getTitleLength)
+                .mapToInt(m -> m.getTitleLength())
                 .max()
                 .orElseThrow(NoSuchElementException::new);
     }
@@ -163,7 +161,11 @@ public class HomeController implements Initializable {
         Stream<Movie> streamFromList = movies.stream();
 
         return streamFromList
-                .filter(movie -> movie.releaseYear >= startYear && movie.releaseYear <= endYear)
+                .filter(movie -> (movie.releaseYear >= startYear && movie.releaseYear <= endYear))
                 .toList();
+    }
+
+    public ObservableList<Movie> getObservableMovies() {
+        return observableMovies;
     }
 }

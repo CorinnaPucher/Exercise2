@@ -10,6 +10,7 @@ import java.util.List;
 public class MovieAPI {
     /**
      * Sends GET request to the server and returns the response as a JSON String
+     *
      * @return JSON String
      */
     public static String sendRequest() {
@@ -21,8 +22,8 @@ public class MovieAPI {
                 .build();
 
         Call call = client.newCall(request);
-        try {
-            Response response = call.execute();
+
+        try (Response response = call.execute()) {
             return response.body().string();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -32,25 +33,26 @@ public class MovieAPI {
 
     /**
      * Sends GET request to the server including parameters and returns the response as a JSON String
-     * @param query search value title
-     * @param genre genre
-     * @param releaseYear released year
-     * @param ratingFrom movie rating
+     *
+     * @param query       search value title
+     * @param genre       genre
+     * @param releaseYear released year (-1 = no input)
+     * @param ratingFrom  movie rating (-1 = no input)
      * @return JSON String
      */
     public static String sendRequest(String query, String genre, int releaseYear, double ratingFrom) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("https://prog2.fh-campuswien.ac.at/movies?");
-        if(!query.equals("")) {
+        if (!query.equals("")) {
             stringBuilder.append("query=" + query + "&");
         }
-        if(!genre.equals("")) {
+        if (!genre.equals("")) {
             stringBuilder.append("genre=" + genre + "&");
         }
-        if(releaseYear != -1) {
+        if (releaseYear != -1) {
             stringBuilder.append("releaseYear=" + releaseYear + "&");
         }
-        if(ratingFrom != -1) {
+        if (ratingFrom != -1) {
             stringBuilder.append("ratingFrom=" + ratingFrom);
         }
 
@@ -62,8 +64,7 @@ public class MovieAPI {
                 .build();
 
         Call call = client.newCall(request);
-        try {
-            Response response = call.execute();
+        try (Response response = call.execute()) {
             return response.body().string();
         } catch (IOException e) {
             throw new RuntimeException(e);
