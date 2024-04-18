@@ -33,6 +33,21 @@ public class Movie implements Comparable<Movie> {
         this.mainCast = jsonMovie.mainCast;
         this.rating = jsonMovie.rating;
     }
+    public Movie(String id, String title, String[] genres, int releaseYear, String description,
+                 String imgUrl, int lengthInMinutes, String[] directors, String[] writers,
+                 String[] mainCast, double rating) {
+        this.id = id;
+        this.title = title;
+        this.genres = genres;
+        this.releaseYear = releaseYear;
+        this.description = description;
+        this.imgUrl = imgUrl;
+        this.lengthInMinutes = lengthInMinutes;
+        this.directors = directors;
+        this.writers = writers;
+        this.mainCast = mainCast;
+        this.rating = rating;
+    }
     public Movie(String title) {
         this.title = title;
     }

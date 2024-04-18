@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -88,7 +89,7 @@ public class HomeController implements Initializable {
             releaseYear = Integer.parseInt(yearSearchField.getText());
         }
         if (!ratingSearchField.getText().equals("")) {
-            ratingFrom = Integer.parseInt(ratingSearchField.getText());
+            ratingFrom = Double.parseDouble(ratingSearchField.getText());
         }
         List<Movie> filteredMovies = JSONAction.parseJSON(MovieAPI.sendRequest(query, genre, releaseYear, ratingFrom));
         observableMovies.addAll(filteredMovies);
@@ -111,27 +112,16 @@ public class HomeController implements Initializable {
      * @return actor with highest count
      */
     public String getMostPopularActor(List<Movie> movies) {
-        Stream<Movie> streamFromList = movies.stream();
-        Map<String, Integer> countMap = new HashMap<>();
-        streamFromList.forEach(movie -> {
-            Stream<String> actorArray = Stream.of(movie.mainCast);
-            actorArray.forEach(actor -> {
-                int numberMovies = 0;
-                if (countMap.get(actor) != null) {
-                    numberMovies = countMap.get(actor);
-                }
-                countMap.put(actor, numberMovies + 1);
-            });
-        });
-        final int[] maxCount = {0};
-        final String[] maxActor = {""};
-        countMap.forEach((actorName, actorCount) -> {
-            if(actorCount > maxCount[0]) {
-                maxCount[0] = actorCount;
-                maxActor[0] = actorName;
-            }
-        });
-        return maxActor[0];
+        Stream<Map.Entry<String, Long>> actorStream = movies.stream()
+                .flatMap(movie -> Arrays.stream(movie.mainCast))
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet()
+                .stream();
+
+        return actorStream
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("");
     }
 
     /**
@@ -141,13 +131,11 @@ public class HomeController implements Initializable {
      */
     public int getLongestMovieTitle(List<Movie> movies) {
         Stream<Movie> streamFromList = movies.stream();
-        Integer longestTitle = streamFromList
+
+        return streamFromList
                 .mapToInt(Movie::getTitleLength)
                 .max()
                 .orElseThrow(NoSuchElementException::new);
-        //Stream<Movie> newStream = movies.stream();
-        //newStream.forEach(movie -> System.out.println(movie.title + " " + movie.getTitleLength()));
-        return longestTitle;
     }
 
     /**
@@ -158,10 +146,10 @@ public class HomeController implements Initializable {
      */
     public long countMoviesFrom(List<Movie> movies, String director) {
         Stream<Movie> streamFromList = movies.stream();
-        Long movieCount = streamFromList
+
+        return streamFromList
                 .filter(movie -> movie.directorIsInsideArray(director))
                 .count();
-        return movieCount;
     }
 
     /**
@@ -173,9 +161,9 @@ public class HomeController implements Initializable {
      */
     public List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
         Stream<Movie> streamFromList = movies.stream();
-        List<Movie> filteredList = streamFromList
+
+        return streamFromList
                 .filter(movie -> movie.releaseYear >= startYear && movie.releaseYear <= endYear)
                 .toList();
-        return filteredList;
     }
 }

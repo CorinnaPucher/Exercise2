@@ -74,16 +74,64 @@ class MovieTest {
         controller.filter("", "", 1997, -1);
         assertEquals(controller.getObservableMovies().get(0).title, "Life Is Beautiful");
     }
-    /*@Test
+    @Test
     void if_ratingFrom_is_filtering () {
         HomeController controller = new HomeController();
-        controller.filter("", "", -1, 8.5);
-        assertEquals(controller.getObservableMovies().get(0).title, "The Lion King");
-    }*/
+        controller.filter("", "", -1, 9.3);
+        assertEquals(controller.getObservableMovies().get(0).title, "The Shawshank Redemption");
+    }
     @Test
-    void if_we_can_find_leon () {
+    void if_we_can_find_most_occuring_actor () {
         HomeController controller = new HomeController();
-        assertEquals("Leonardo DiCaprio", controller.getMostPopularActor(controller.allMovies));
+        Movie theGodfather = new Movie(
+                "a00b56aa-0eaf-4332-a02d-736910950128",
+                "The Godfather",
+                new String[] {"Drama"},
+                1972,
+                "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+                "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
+                175,
+                new String[] {"Francis Ford Coppola"},
+                new String[] {"Mario Puzo", "Francis Ford Coppola"},
+                new String[] {"Marlon Brando", "Al Pacino", "James Caan", "Leonardo DiCaprio"},
+                9.2
+        );
+
+        // Example movie 2: The Shawshank Redemption
+        Movie shawshankRedemption = new Movie(
+                "16f94a79-7804-4d73-bab9-6cf415b30182",
+                "The Shawshank Redemption",
+                new String[] {"Drama"},
+                1994,
+                "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+                "https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg",
+                142,
+                new String[] {"Frank Darabont"},
+                new String[] {"Stephen King", "Frank Darabont"},
+                new String[] {"Tim Robbins", "Morgan Freeman", "Bob Gunton", "Leonardo DiCaprio"},
+                9.3
+        );
+
+        // Example movie 3: The Dark Knight
+        Movie theDarkKnight = new Movie(
+                "8ca193d8-7879-42ed-820e-6230b52746a3",
+                "The Dark Knight",
+                new String[] {"Action", "Crime", "Drama"},
+                2008,
+                "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, the caped crusader must come to terms with one of the greatest psychological tests of his ability to fight injustice.",
+                "https://m.media-amazon.com/images/M/MV5BMTk4ODQzNDY3Ml5BMl5BanBnXkFtZTcwODA0NTM4Nw@@._V1_FMjpg_UX1000_.jpg",
+                152,
+                new String[] {"Christopher Nolan"},
+                new String[] {"Jonathan Nolan", "Christopher Nolan"},
+                new String[] {"test", "Aaron Eckhart"},
+                9.0
+        );
+        List<Movie> testList = new ArrayList<>();
+        testList.add(theDarkKnight);
+        testList.add(theGodfather);
+        testList.add(shawshankRedemption);
+
+        assertEquals("Leonardo DiCaprio", controller.getMostPopularActor(testList));
     }
     @Test
     void if_we_can_get_longest_movietitle () {
